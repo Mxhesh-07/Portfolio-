@@ -333,11 +333,12 @@
         <div class="contact-info">
           <p>Drop a message below or connect with me on social media.</p>
           <p>Based in: Karnataka, India</p>
-          <form class="contact-form" action="https://formspree.io/f/mlgqwzdv" method="POST">
+          <form class="contact-form" id="contactForm" action="https://formspree.io/f/mlgqwzdv" method="POST">
             <input type="text" name="name" placeholder="Your Name" required>
             <input type="email" name="email" placeholder="Your Email" required>
             <textarea name="message" placeholder="Your Message" rows="4" required></textarea>
             <button type="submit" class="btn btn-blue magnetic">Send Message</button>
+            <p id="formStatus" class="form-status" role="status" aria-live="polite"></p>
           </form>
         </div>
         <div class="social-grid">

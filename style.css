@@ -360,6 +360,10 @@
   .contact-form input::placeholder, .contact-form textarea::placeholder{color:var(--text-on-ink-dim);}
   .contact-form input:focus, .contact-form textarea:focus{outline:none;border-color:var(--blue);background:rgba(255,43,43,0.05);}
   .contact-form button{align-self:flex-start;margin-top:6px;cursor:pointer;border:none;font-family:var(--mono);font-size:13px;font-weight:600;}
+  .contact-form button:disabled{opacity:0.6;cursor:not-allowed;}
+  .form-status{font-family:var(--mono);font-size:12.5px;margin-top:4px;min-height:16px;}
+  .form-status.success{color:#4ade80;}
+  .form-status.error{color:var(--blue);}
   .social-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;}
   @media (max-width:500px){.social-grid{grid-template-columns:1fr;}}
   .social-link{

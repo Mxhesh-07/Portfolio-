@@ -224,3 +224,50 @@
   }
   
   fetchGitHubStats();
+
+  // --- Contact form: submit via fetch so the page never navigates away ---
+  const contactForm = document.getElementById('contactForm');
+  const formStatus = document.getElementById('formStatus');
+  if (contactForm && formStatus) {
+    contactForm.addEventListener('submit', async function (e) {
+      e.preventDefault();
+      const submitBtn = contactForm.querySelector('button[type="submit"]');
+      const originalBtnText = submitBtn ? submitBtn.textContent : '';
+
+      formStatus.textContent = 'Sending...';
+      formStatus.className = 'form-status';
+      if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Sending...';
+      }
+
+      try {
+        const response = await fetch(contactForm.action, {
+          method: 'POST',
+          body: new FormData(contactForm),
+          headers: { 'Accept': 'application/json' }
+        });
+
+        if (response.ok) {
+          formStatus.textContent = "Thanks! Your message has been sent — I'll get back to you soon.";
+          formStatus.className = 'form-status success';
+          contactForm.reset();
+        } else {
+          const data = await response.json().catch(() => null);
+          const message = data && data.errors && data.errors.length
+            ? data.errors.map(err => err.message).join(', ')
+            : 'Something went wrong. Please try again or email me directly.';
+          formStatus.textContent = message;
+          formStatus.className = 'form-status error';
+        }
+      } catch (error) {
+        formStatus.textContent = 'Network error — please check your connection and try again.';
+        formStatus.className = 'form-status error';
+      } finally {
+        if (submitBtn) {
+          submitBtn.disabled = false;
+          submitBtn.textContent = originalBtnText;
+        }
+      }
+    });
+  }
