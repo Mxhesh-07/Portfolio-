@@ -111,16 +111,16 @@
     const topLayer = panel && panel.querySelector('.hero-pic--top');
     if(!panel || !topLayer) return;
 
-    const isCoarsePointer = window.matchMedia('(pointer: coarse)').matches;
-    if(reducedMotion || isCoarsePointer || typeof gsap === 'undefined'){
-      // No mouse-driven reveal on touch devices or reduced-motion — just
+    if(reducedMotion || typeof gsap === 'undefined'){
+      // No reveal for reduced-motion users or if GSAP failed to load — just
       // show the normal portrait, matching the fullscreen build's fallback.
       topLayer.classList.add('no-reveal');
       return;
     }
 
+    const isCoarsePointer = window.matchMedia('(pointer: coarse)').matches;
     const DEFAULT_RADIUS = 55;
-    const HOVER_RADIUS = 95;
+    const HOVER_RADIUS = isCoarsePointer ? 70 : 95;
 
     const setVar = (name, value) => panel.style.setProperty(name, value);
     const rect0 = panel.getBoundingClientRect();
@@ -132,13 +132,34 @@
     const quickY = gsap.quickTo(panel, '--reveal-y', { duration: 0.3, ease: 'power3.out' });
     const quickRadius = gsap.quickTo(panel, '--reveal-radius', { duration: 0.5, ease: 'power3.out' });
 
-    panel.addEventListener('mousemove', (e) => {
+    function moveTo(clientX, clientY){
       const r = panel.getBoundingClientRect();
-      quickX(e.clientX - r.left);
-      quickY(e.clientY - r.top);
-    });
-    panel.addEventListener('mouseenter', () => quickRadius(HOVER_RADIUS));
-    panel.addEventListener('mouseleave', () => quickRadius(DEFAULT_RADIUS));
+      quickX(clientX - r.left);
+      quickY(clientY - r.top);
+    }
+
+    if(isCoarsePointer){
+      // Touch devices: the reveal follows the finger while it's pressed on
+      // the photo, and resets once the finger lifts. Listeners are passive
+      // so normal page scrolling is never blocked.
+      panel.addEventListener('touchstart', (e) => {
+        const t = e.touches[0];
+        if(!t) return;
+        moveTo(t.clientX, t.clientY);
+        quickRadius(HOVER_RADIUS);
+      }, { passive: true });
+      panel.addEventListener('touchmove', (e) => {
+        const t = e.touches[0];
+        if(!t) return;
+        moveTo(t.clientX, t.clientY);
+      }, { passive: true });
+      panel.addEventListener('touchend', () => quickRadius(DEFAULT_RADIUS));
+      panel.addEventListener('touchcancel', () => quickRadius(DEFAULT_RADIUS));
+    } else {
+      panel.addEventListener('mousemove', (e) => moveTo(e.clientX, e.clientY));
+      panel.addEventListener('mouseenter', () => quickRadius(HOVER_RADIUS));
+      panel.addEventListener('mouseleave', () => quickRadius(DEFAULT_RADIUS));
+    }
   })();
 
   // Cursor-follow glow dot (whole page)
