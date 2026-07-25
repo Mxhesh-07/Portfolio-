@@ -102,7 +102,46 @@
         c.style.translate = `${px*depth}px ${py*depth}px`;
       });
     });
-  }  // Cursor-follow glow dot (whole page)
+  }  // Hero portrait reveal: moving the cursor over the photo panel reveals
+  // the second image underneath through a soft circular CSS mask. Uses
+  // GSAP quickTo() so position/radius updates never touch React/DOM
+  // re-renders — they just write CSS custom properties each frame.
+  (function heroReveal(){
+    const panel = document.getElementById('codePanel');
+    const topLayer = panel && panel.querySelector('.hero-pic--top');
+    if(!panel || !topLayer) return;
+
+    const isCoarsePointer = window.matchMedia('(pointer: coarse)').matches;
+    if(reducedMotion || isCoarsePointer || typeof gsap === 'undefined'){
+      // No mouse-driven reveal on touch devices or reduced-motion — just
+      // show the normal portrait, matching the fullscreen build's fallback.
+      topLayer.classList.add('no-reveal');
+      return;
+    }
+
+    const DEFAULT_RADIUS = 55;
+    const HOVER_RADIUS = 95;
+
+    const setVar = (name, value) => panel.style.setProperty(name, value);
+    const rect0 = panel.getBoundingClientRect();
+    setVar('--reveal-x', `${rect0.width / 2}px`);
+    setVar('--reveal-y', `${rect0.height / 2}px`);
+    setVar('--reveal-radius', `${DEFAULT_RADIUS}px`);
+
+    const quickX = gsap.quickTo(panel, '--reveal-x', { duration: 0.3, ease: 'power3.out' });
+    const quickY = gsap.quickTo(panel, '--reveal-y', { duration: 0.3, ease: 'power3.out' });
+    const quickRadius = gsap.quickTo(panel, '--reveal-radius', { duration: 0.5, ease: 'power3.out' });
+
+    panel.addEventListener('mousemove', (e) => {
+      const r = panel.getBoundingClientRect();
+      quickX(e.clientX - r.left);
+      quickY(e.clientY - r.top);
+    });
+    panel.addEventListener('mouseenter', () => quickRadius(HOVER_RADIUS));
+    panel.addEventListener('mouseleave', () => quickRadius(DEFAULT_RADIUS));
+  })();
+
+  // Cursor-follow glow dot (whole page)
   const cursorGlow = document.getElementById('cursorGlow');
   if(cursorGlow && !reducedMotion && window.matchMedia('(hover:hover)').matches){
     window.addEventListener('mousemove', (e)=>{
@@ -198,6 +237,37 @@
     });
   });
 
+  // Contact form: submit via fetch so we can show inline success/error
+  // status instead of a full page reload/redirect.
+  const contactForm = document.getElementById('contactForm');
+  const formStatus = document.getElementById('formStatus');
+  if(contactForm){
+    contactForm.addEventListener('submit', async (e)=>{
+      e.preventDefault();
+      const submitBtn = contactForm.querySelector('button[type="submit"]');
+      const originalLabel = submitBtn ? submitBtn.textContent : '';
+      if(submitBtn){ submitBtn.disabled = true; submitBtn.textContent = 'Sending…'; }
+      if(formStatus){ formStatus.textContent = ''; formStatus.classList.remove('is-error','is-success'); }
+      try{
+        const res = await fetch(contactForm.action, {
+          method: 'POST',
+          body: new FormData(contactForm),
+          headers: { 'Accept': 'application/json' }
+        });
+        if(res.ok){
+          if(formStatus){ formStatus.textContent = 'Thanks — your message is on its way.'; formStatus.classList.add('is-success'); }
+          contactForm.reset();
+        } else {
+          if(formStatus){ formStatus.textContent = 'Something went wrong. Please try emailing me directly.'; formStatus.classList.add('is-error'); }
+        }
+      } catch(err){
+        if(formStatus){ formStatus.textContent = 'Network error — please try emailing me directly.'; formStatus.classList.add('is-error'); }
+      } finally {
+        if(submitBtn){ submitBtn.disabled = false; submitBtn.textContent = originalLabel; }
+      }
+    });
+  }
+
   // Fetch Live GitHub Stats
   async function fetchGitHubStats() {
     const username = 'Mxhesh-07';
@@ -224,50 +294,3 @@
   }
   
   fetchGitHubStats();
-
-  // --- Contact form: submit via fetch so the page never navigates away ---
-  const contactForm = document.getElementById('contactForm');
-  const formStatus = document.getElementById('formStatus');
-  if (contactForm && formStatus) {
-    contactForm.addEventListener('submit', async function (e) {
-      e.preventDefault();
-      const submitBtn = contactForm.querySelector('button[type="submit"]');
-      const originalBtnText = submitBtn ? submitBtn.textContent : '';
-
-      formStatus.textContent = 'Sending...';
-      formStatus.className = 'form-status';
-      if (submitBtn) {
-        submitBtn.disabled = true;
-        submitBtn.textContent = 'Sending...';
-      }
-
-      try {
-        const response = await fetch(contactForm.action, {
-          method: 'POST',
-          body: new FormData(contactForm),
-          headers: { 'Accept': 'application/json' }
-        });
-
-        if (response.ok) {
-          formStatus.textContent = "Thanks! Your message has been sent — I'll get back to you soon.";
-          formStatus.className = 'form-status success';
-          contactForm.reset();
-        } else {
-          const data = await response.json().catch(() => null);
-          const message = data && data.errors && data.errors.length
-            ? data.errors.map(err => err.message).join(', ')
-            : 'Something went wrong. Please try again or email me directly.';
-          formStatus.textContent = message;
-          formStatus.className = 'form-status error';
-        }
-      } catch (error) {
-        formStatus.textContent = 'Network error — please check your connection and try again.';
-        formStatus.className = 'form-status error';
-      } finally {
-        if (submitBtn) {
-          submitBtn.disabled = false;
-          submitBtn.textContent = originalBtnText;
-        }
-      }
-    });
-  }

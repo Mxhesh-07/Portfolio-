@@ -15,19 +15,20 @@
 <meta property="og:type" content="website">
 <meta property="og:title" content="Mahesh — Python &amp; AI Developer">
 <meta property="og:description" content="Portfolio of Mahesh — Python and web developer building AI voice assistants, computer vision systems, and Django applications from Karnataka, India.">
-<meta property="og:image" content="profile.jpeg">
-<meta property="og:url" content="https://your-domain-here.com/">
+<meta property="og:image" content="https://portfolio-pi-self-10.vercel.app/profile.jpeg">
+<meta property="og:url" content="https://portfolio-pi-self-10.vercel.app/">
 
 <!-- Twitter card -->
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Mahesh — Python &amp; AI Developer">
 <meta name="twitter:description" content="Portfolio of Mahesh — Python and web developer building AI voice assistants, computer vision systems, and Django applications from Karnataka, India.">
-<meta name="twitter:image" content="profile.jpeg">
+<meta name="twitter:image" content="https://portfolio-pi-self-10.vercel.app/profile.jpeg">
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Space+Grotesk:wght@400&family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" defer></script>
 </head>
 <body>
 <div class="cursor-glow" id="cursorGlow" aria-hidden="true"></div>
@@ -88,7 +89,10 @@
           <div class="chip chip-a" id="chipA"><span></span>OPENCV · LIVE</div>
           <div class="chip chip-b" id="chipB"><span></span>STATUS: OPEN</div>
           <div class="chip chip-c" id="chipC"><span></span>DJANGO · REST</div>
-          <img src="profile.jpeg" alt="Mahesh" class="hero-pic" width="1023" height="1537" decoding="async" fetchpriority="high">
+          <!-- Cursor reveal: base layer sits underneath, always fully rendered -->
+          <img src="profile-base.webp" alt="" aria-hidden="true" class="hero-pic hero-pic--base" width="841" height="1264" decoding="async" loading="lazy">
+          <!-- Top layer: portrait, masked with a radial gradient around the cursor -->
+          <img src="profile-top.webp" alt="Mahesh" class="hero-pic hero-pic--top" width="1023" height="1537" decoding="async" fetchpriority="high">
           <div class="hero-role-pill"><span class="hero-role-dot" aria-hidden="true"></span>Python Dev / AI Builder</div>
         </div>
       </div>
@@ -356,7 +360,7 @@
 
 <footer>Code. Learn. Build. Innovate. — Mahesh, © 2026</footer>
 
-<script src="script.js"></script>
+<script src="script.js" defer></script>
 
 </body>
 </html>
