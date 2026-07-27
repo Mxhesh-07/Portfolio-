@@ -18,6 +18,9 @@
 <meta property="og:image" content="https://portfolio-pi-self-10.vercel.app/profile.jpeg">
 <meta property="og:url" content="https://portfolio-pi-self-10.vercel.app/">
 
+<!-- Canonical URL: tells Google this is the official version of the page -->
+<link rel="canonical" href="https://portfolio-pi-self-10.vercel.app/">
+
 <!-- Twitter card -->
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Mahesh — Python &amp; AI Developer">
@@ -29,6 +32,39 @@
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Space+Grotesk:wght@400&family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" defer></script>
+
+<!-- Structured data: helps Google understand this page is about a person,
+     and can enable a richer search result (knowledge panel style) for
+     searches like "Mahesh Python developer" -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Person",
+  "name": "Mahesh",
+  "url": "https://portfolio-pi-self-10.vercel.app/",
+  "image": "https://portfolio-pi-self-10.vercel.app/profile.jpeg",
+  "jobTitle": "Python & AI Developer",
+  "description": "Final-year BCA student and Python/web developer building AI voice assistants, computer vision systems, and Django applications.",
+  "email": "mailto:mxhesh.dev@gmail.com",
+  "address": {
+    "@type": "PostalAddress",
+    "addressRegion": "Karnataka",
+    "addressCountry": "IN"
+  },
+  "alumniOf": {
+    "@type": "CollegeOrUniversity",
+    "name": "Shree Devi Institute of Information Science"
+  },
+  "knowsAbout": [
+    "Python", "Django", "REST API", "OpenCV", "TensorFlow",
+    "Computer Vision", "Speech Recognition", "JavaScript", "SQL"
+  ],
+  "sameAs": [
+    "https://github.com/Mxhesh-07",
+    "https://www.linkedin.com/in/mahesh-s-6ab335357"
+  ]
+}
+</script>
 </head>
 <body>
 <div class="cursor-glow" id="cursorGlow" aria-hidden="true"></div>
